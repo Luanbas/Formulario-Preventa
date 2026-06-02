@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="theme-color" content="#1A3A5C" />
+<title>Requerimiento de Preventa</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue: #1A3A5C;
+  --blue-mid: #2E75B6;
+  --blue-bg: #0F2640;
+  --blue-light: #EBF3FA;
+  --blue-info: #E6F1FB;
+  --blue-info-text: #185FA5;
+  --orange: #E07B00;
+  --orange-bg: #FFF8EE;
+  --orange-text: #78350f;
+  --green: #3B6D11;
+  --green-dark: #27500A;
+  --border: #CBD5E1;
+  --border-light: #E2E8F0;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --text-hint: #94a3b8;
+  --bg: #F8FAFC;
+  --white: #ffffff;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* TOP BAR */
+.top-bar {
+  background: var(--blue);
+  padding: 16px 18px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.top-bar h1 { color: #fff; font-size: 16px; font-weight: 600; letter-spacing: .02em; }
+.top-bar p { color: #7AACD4; font-size: 12px; margin-top: 3px; }
+
+/* PROGRESS */
+.prog-wrap { background: var(--blue-bg); padding: 10px 18px 12px; }
+.prog-dots { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+.dot { height: 6px; border-radius: 3px; background: #2E5070; transition: all .25s; flex-shrink: 0; }
+.dot.done { background: var(--blue-mid); }
+.dot.active { background: #fff; }
+.prog-label { font-size: 11px; color: #7AACD4; }
+
+/* STEPS */
+.step { display: none; padding: 20px 18px; }
+.step.active { display: block; }
+.step-title { font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.step-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 22px; line-height: 1.4; }
+
+/* FIELDS */
+.field { margin-bottom: 20px; }
+.flabel {
+  font-size: 11px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .06em;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 4px;
+}
+.req { color: var(--orange); font-size: 14px; }
+.finput {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px 14px;
+  font-size: 16px;
+  color: var(--text);
+  font-family: inherit;
+  background: var(--white);
+  -webkit-appearance: none;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.finput:focus { border-color: var(--blue-mid); box-shadow: 0 0 0 3px rgba(46,117,182,.12); }
+.finput::placeholder { color: var(--text-hint); font-style: italic; }
+textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
+.hint { font-size: 12px; color: var(--text-hint); font-style: italic; margin-top: 6px; }
+
+/* COTIZACIONES LIST */
+.coti-row { display: flex; gap: 8px; }
+.coti-row .finput { flex: 1; }
+.btn-coti-add {
+  flex-shrink: 0; padding: 0 16px;
+  background: var(--blue-mid); color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .12s;
+}
+.btn-coti-add:active { background: var(--blue-dark); }
+.coti-list { margin-top: 10px; border-radius: var(--radius-sm); overflow: hidden; }
+.coti-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-bottom: none;
+}
+.coti-item:last-child { border-bottom: 1px solid var(--border-light); }
+.coti-num {
+  flex-shrink: 0; width: 22px; height: 22px;
+  background: var(--blue-mid); color: #fff;
+  border-radius: 50%; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.coti-text { flex: 1; font-size: 14px; color: var(--text); line-height: 1.4; }
+.coti-del {
+  flex-shrink: 0; width: 28px; height: 28px;
+  background: none; border: none; color: var(--text-muted);
+  font-size: 18px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; transition: background .12s, color .12s;
+}
+.coti-del:active { background: #fee2e2; color: #dc2626; }
+.coti-empty {
+  margin-top: 10px; padding: 13px 14px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text-hint); font-style: italic; text-align: center;
+}
+
+/* GEO BUTTON */
+.geo-row { display: flex; gap: 8px; align-items: stretch; }
+.geo-row .finput { flex: 1; }
+.btn-geo {
+  flex-shrink: 0;
+  padding: 0 14px;
+  border: 1px solid var(--blue-mid);
+  border-radius: var(--radius-sm);
+  background: var(--blue-light);
+  color: var(--blue-mid);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .12s;
+}
+.btn-geo:active { background: #d0e8f7; }
+.btn-geo.loading { opacity: .6; pointer-events: none; }
+.btn-geo.ok { background: #e6f4ea; border-color: var(--green); color: var(--green); }
+.geo-status { font-size: 12px; margin-top: 6px; min-height: 16px; }
+
+/* OPTIONS */
+.opts { display: flex; flex-direction: column; gap: 9px; }
+.opt {
+  display: flex; align-items: center; gap: 13px;
+  padding: 14px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: var(--white);
+  transition: background .12s, border-color .12s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 52px;
+  user-select: none;
+}
+.opt:active { background: var(--blue-light); }
+.opt.on { background: var(--blue-info); border-color: var(--blue-mid); }
+.opt-box {
+  width: 22px; height: 22px;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+  background: var(--white);
+}
+.opt.on .opt-box { background: var(--blue-mid); border-color: var(--blue-mid); }
+.opt-check { display: none; }
+.opt.on .opt-check { display: block; }
+.opt-text { font-size: 15px; color: var(--text); line-height: 1.35; flex: 1; }
+.opt.on .opt-text { color: var(--blue-info-text); font-weight: 500; }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border-light); margin: 20px 0; }
+
+/* NAV */
+.nav {
+  display: flex; gap: 10px;
+  padding: 12px 18px 24px;
+  background: var(--bg);
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid var(--border-light);
+}
+.btn-back {
+  flex: 0 0 82px; padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--text-muted);
+  font-size: 15px; font-weight: 500;
+  cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-back:active { background: var(--bg); }
+.btn-next {
+  flex: 1; padding: 15px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--blue-mid);
+  color: #fff;
+  font-size: 16px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .12s;
+}
+.btn-next:active { background: var(--blue); }
+
+/* WARN */
+.warn {
+  background: var(--orange-bg);
+  border-left: 3px solid var(--orange);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 13px;
+  font-size: 13px; color: var(--orange-text);
+  margin-bottom: 16px;
+}
+.warn strong { color: var(--orange); }
+
+/* SUMMARY */
+.summ-card {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  padding: 14px 15px;
+  margin-bottom: 12px;
+}
+.summ-card h3 {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--blue-mid);
+  margin-bottom: 10px;
+}
+.summ-row { display: flex; gap: 10px; margin-bottom: 8px; font-size: 14px; line-height: 1.4; }
+.summ-row:last-child { margin-bottom: 0; }
+.summ-key { color: var(--text-muted); flex-shrink: 0; min-width: 100px; }
+.summ-val { color: var(--text); font-weight: 500; flex: 1; word-break: break-word; }
+
+/* FINAL BUTTONS */
+.btn-copy {
+  width: 100%; padding: 16px;
+  border: none; border-radius: var(--radius-sm);
+  background: var(--blue-mid); color: #fff;
+  font-size: 16px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .12s;
+}
+.btn-copy:active { background: var(--blue); }
+.btn-copy.ok { background: var(--green); }
+.btn-wapp {
+  width: 100%; padding: 16px;
+  border: 1px solid #25D366; border-radius: var(--radius-sm);
+  background: #fff; color: #166534;
+  font-size: 16px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.btn-wapp:active { background: #f0fdf4; }
+.btn-nueva {
+  width: 100%; padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-muted);
+  font-size: 14px; cursor: pointer; font-family: inherit;
+}
+.btn-nueva:active { background: var(--bg); }
+.final-pad { padding: 20px 18px 30px; }
+
+/* ICONS SVG inline */
+.ico { display: inline-block; vertical-align: middle; }
+
+/* SECTION LABEL */
+.section-label {
+  font-size: 12px; font-weight: 700;
+  color: var(--blue-mid);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--blue-light);
+}
+
+.finput.field-error {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220,38,38,.10) !important;
+}
+.opts.field-error {
+  outline: 2px solid #dc2626;
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* IMAGE PICKER */
+.btn-img-add {
+  width: 100%; padding: 15px 14px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--text-muted);
+  font-size: 15px; font-weight: 500;
+  cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .12s, background .12s, color .12s;
+}
+.btn-img-add:active,
+.btn-img-add.has-imgs { border-color: var(--blue-mid); background: var(--blue-light); color: var(--blue-mid); }
+.img-thumbs {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px;
+}
+.img-thumb-wrap {
+  position: relative; aspect-ratio: 1;
+  border-radius: var(--radius-sm); overflow: hidden;
+  border: 1px solid var(--border-light);
+  background: var(--bg);
+}
+.img-thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
+.img-remove {
+  position: absolute; top: 4px; right: 4px;
+  width: 24px; height: 24px;
+  background: rgba(0,0,0,.6); border-radius: 50%; border: none;
+  color: #fff; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  line-height: 1;
+}
+.img-count {
+  font-size: 12px; color: var(--blue-info-text);
+  font-weight: 600; margin-top: 8px; display: none;
+}
+
+/* TOGGLE */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  min-height: 52px;
+  transition: background .12s, border-color .12s;
+}
+.toggle-row:active { background: var(--blue-light); }
+.toggle-row.on { background: var(--blue-info); border-color: var(--blue-mid); }
+.toggle-text {
+  font-size: 15px; color: var(--text); line-height: 1.35; flex: 1;
+}
+.toggle-row.on .toggle-text { color: var(--blue-info-text); font-weight: 500; }
+.toggle-switch {
+  width: 46px; height: 26px;
+  background: var(--border);
+  border-radius: 13px;
+  position: relative;
+  flex-shrink: 0;
+  margin-left: 12px;
+  transition: background .2s;
+}
+.toggle-row.on .toggle-switch { background: var(--blue-mid); }
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.toggle-row.on .toggle-switch::after { transform: translateX(20px); }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>Requerimiento de Preventa</h1>
+  <p>CIP / Silicon Access</p>
+</div>
+<div class="prog-wrap">
+  <div class="prog-dots" id="dots"></div>
+  <div class="prog-label" id="prog-label"></div>
+</div>
+
+<!-- PASO 0: Identificación -->
+<div class="step active" id="s0">
+  <div class="step-title">Identificación</div>
+  <div class="step-sub">Datos básicos del cliente y la obra.</div>
+  <div class="field">
+    <div class="flabel">Barrio / obra <span class="req">*</span></div>
+    <input class="finput" id="barrio" type="text" placeholder="Ej: Los Robles" autocomplete="off" />
+  </div>
+  <div class="field">
+    <div class="flabel">Unidad de negocio</div>
+    <input class="finput" id="unidad" type="text" placeholder="Ej: EIDICO, cliente directo..." autocomplete="off" />
+  </div>
+  <div class="field">
+    <div class="flabel">Tipo de cliente <span class="req">*</span></div>
+    <div class="opts" id="tipo_cliente"></div>
+  </div>
+  <div class="field">
+    <div class="flabel">Nombre del contacto <span class="req">*</span></div>
+    <input class="finput" id="contacto_nombre" type="text" placeholder="Ej: Juan García" autocomplete="off" />
+  </div>
+  <div class="field">
+    <div class="flabel">Teléfono del contacto <span class="req">*</span></div>
+    <div class="geo-row">
+      <input class="finput" id="contacto_tel" type="tel" placeholder="Ej: +54 11 4567-8901" autocomplete="off" inputmode="tel" />
+      <button class="btn-geo" id="btn-contacto" onclick="cargarContacto()" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Contacto
+      </button>
+    </div>
+    <div class="geo-status" id="contacto-status"></div>
+  </div>
+</div>
+
+<!-- PASO 1: Ubicación -->
+<div class="step" id="s1">
+  <div class="step-title">Ubicación</div>
+  <div class="step-sub">Dónde está el barrio o la obra.</div>
+  <div class="field">
+    <div class="flabel">Link de Google Maps <span class="req">*</span></div>
+    <div class="geo-row">
+      <input class="finput" id="maps" type="text" placeholder="Pegar enlace o coordenadas" autocomplete="off" inputmode="url" />
+      <button class="btn-geo" id="btn-geo" onclick="obtenerUbicacion()" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 2" opacity=".35"/></svg>
+        Ubicación actual
+      </button>
+    </div>
+    <div class="geo-status" id="geo-status"></div>
+  </div>
+  <div class="field">
+    <div class="flabel">Referencia adicional</div>
+    <input class="finput" id="referencia" type="text" placeholder="Ej: sobre Ruta 6, km 42" autocomplete="off" />
+  </div>
+</div>
+
+<!-- PASO 2: Necesidad -->
+<div class="step" id="s2">
+  <div class="step-title">Necesidad del cliente</div>
+  <div class="step-sub">¿Qué problema hay que resolver?</div>
+  <div class="field">
+    <div class="flabel">¿Qué busca cubrir? <span class="req">*</span></div>
+    <textarea class="finput" id="necesidad" style="min-height:160px" placeholder="Ejemplos:&#10;i. Solución integral. Perímetro completo con cámaras ópticas, iluminación y CES donde sea posible.&#10;ii. Cubrir lateral derecho con cámaras térmicas.&#10;iii. Cámaras internas."></textarea>
+  </div>
+  <div class="field">
+    <div class="flabel">Tipo de negocio <span class="req">*</span></div>
+    <div class="opts" id="tipo_negocio"></div>
+  </div>
+</div>
+
+<!-- PASO 3: Tecnología y Alcance -->
+<div class="step" id="s3">
+  <div class="step-title">Tecnología y Alcance</div>
+  <div class="step-sub">Especificá los componentes y el alcance del proyecto.</div>
+
+  <div class="section-label">Tecnología</div>
+
+  <div class="field">
+    <div class="flabel">Lugar de visualización de las cámaras <span class="req">*</span></div>
+    <div class="opts" id="lugar_visualizacion"></div>
+  </div>
+  <div class="field">
+    <div class="flabel">Iluminación</div>
+    <div class="opts" id="iluminacion"></div>
+  </div>
+  <div class="field">
+    <div class="flabel">Cerco eléctrico de Seguridad</div>
+    <div class="toggle-row" id="ces_yn" onclick="toggleCheck(this)">
+      <span class="toggle-text">CES</span>
+      <div class="toggle-switch"></div>
+    </div>
+  </div>
+  <div id="modalidad_ces_wrap" style="display:none">
+    <div class="field">
+      <div class="flabel">Modalidad CES <span class="req">*</span></div>
+      <div class="opts" id="modalidad_ces"></div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="flabel">Analítica</div>
+    <div class="opts" id="analitica"></div>
+    <div id="analitica_otro_wrap" style="display:none; margin-top:9px">
+      <input class="finput" id="analitica_otro" type="text" placeholder="Especificar analítica..." autocomplete="off" />
+    </div>
+  </div>
+  <div class="field">
+    <div class="flabel">Cámaras térmicas — ¿Cubren algún sector específico?</div>
+    <input class="finput" id="camaras_termicas" type="text" placeholder="Ej: bajo los puentes, lagos, frente, etc." autocomplete="off" />
+    <div class="hint">Completar solo si aplica cámaras térmicas en un sector puntual.</div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-label">Alcances</div>
+
+  <div class="field">
+    <div class="flabel">Tecnología existente en el sitio</div>
+    <div class="toggle-row" id="tec_reutiliza" onclick="toggleCheck(this)" style="margin-bottom:9px">
+      <span class="toggle-text">Se intenta reutilizar</span>
+      <div class="toggle-switch"></div>
+    </div>
+    <div class="toggle-row" id="tec_remueve" onclick="toggleCheck(this)">
+      <span class="toggle-text">Se remueve</span>
+      <div class="toggle-switch"></div>
+    </div>
+  </div>
+  <div id="quien_remueve_wrap" style="display:none">
+    <div class="field">
+      <div class="flabel">¿Quién la remueve?</div>
+      <div class="opts" id="quien_remueve"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+</div>
+
+<!-- PASO 4: Silicon Access -->
+<div class="step" id="s4">
+  <div class="step-title">Silicon Access</div>
+  <div class="step-sub">Datos de control de acceso para la cotización.</div>
+  <div class="field">
+    <div class="flabel">Cotizar Silicon Access</div>
+    <div class="toggle-row" id="silicon_toggle" onclick="toggleCheck(this)">
+      <span class="toggle-text">Silicon Access</span>
+      <div class="toggle-switch"></div>
+    </div>
+  </div>
+  <div id="silicon_wrap" style="display:none">
+    <div class="field">
+      <div class="flabel">Cantidad de Accesos <span class="req">*</span></div>
+      <input class="finput" id="cant_accesos" type="number" min="0" placeholder="0" inputmode="numeric" />
+    </div>
+    <div class="field">
+      <div class="flabel">Cantidad de Carriles vehiculares <span class="req">*</span></div>
+      <input class="finput" id="cant_carriles" type="number" min="0" placeholder="0" inputmode="numeric" />
+    </div>
+    <div class="field">
+      <div class="flabel">Cantidad de Accesos peatonales <span class="req">*</span></div>
+      <input class="finput" id="cant_peatonales" type="number" min="0" placeholder="0" inputmode="numeric" />
+    </div>
+    <div class="field">
+      <div class="flabel">Cantidad de Smartphones <span class="req">*</span></div>
+      <input class="finput" id="cant_smartphones" type="number" min="0" placeholder="0" inputmode="numeric" />
+    </div>
+    <div class="field">
+      <div class="flabel">Cantidad de Barreras a cotizar <span class="req">*</span></div>
+      <input class="finput" id="cant_barreras" type="number" min="0" placeholder="0" inputmode="numeric" />
+    </div>
+    <div class="divider"></div>
+    <div class="field">
+      <div class="flabel">Aclaratorias</div>
+      <textarea class="finput" id="aclaratorias" placeholder="Ej: Face ID para todos los carriles"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- PASO 5: Cierre -->
+<div class="step" id="s5">
+  <div class="step-title">Notas y cierre</div>
+  <div class="step-sub">Último paso antes del resumen.</div>
+  <div class="field">
+    <div class="flabel">Observaciones adicionales</div>
+    <textarea class="finput" id="notas" placeholder="Ej: solo queda 1 de los 2 accesos activo, es barrio EIDICO, hay obrador en sector norte..."></textarea>
+  </div>
+  <div class="field">
+    <div class="flabel">Detalle de cotizaciones solicitadas <span class="req">*</span></div>
+    <div class="coti-row">
+      <input class="finput" id="coti-input" type="text"
+        placeholder="Ej: VSS perímetro completo"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();agregarCotizacion()}" />
+      <button class="btn-coti-add" onclick="agregarCotizacion()" type="button">+ Agregar</button>
+    </div>
+    <div class="coti-list" id="coti-list"></div>
+  </div>
+  <div class="divider"></div>
+  <div class="field">
+    <div class="flabel">Comercial responsable <span class="req">*</span></div>
+    <input class="finput" id="comercial" type="text" placeholder="Nombre del vendedor" autocomplete="off" />
+  </div>
+  <div class="field">
+    <div class="flabel">Fecha</div>
+    <input class="finput" id="fecha" type="text" autocomplete="off" />
+  </div>
+  <div class="divider"></div>
+  <div class="field">
+    <div class="flabel">Fotos del sitio</div>
+    <input type="file" id="img-input" accept="image/*" multiple style="display:none" onchange="addImages(this)" />
+    <button class="btn-img-add" id="btn-img-add" onclick="document.getElementById('img-input').click()" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Agregar fotos
+    </button>
+    <div class="img-thumbs" id="img-thumbs"></div>
+    <div class="img-count" id="img-count"></div>
+    <div class="hint" style="margin-top:8px">Las fotos se envían junto al texto al compartir.</div>
+  </div>
+</div>
+
+<!-- PASO 6: Resumen -->
+<div class="step" id="s6">
+  <div class="step-title">Resumen listo ✓</div>
+  <div class="step-sub">Revisá y enviá a Preventa.</div>
+  <div id="summ-content"></div>
+</div>
+
+<!-- NAV -->
+<div class="nav" id="nav-bar">
+  <button class="btn-back" id="btn-back" onclick="goBack()">&#8592; Atrás</button>
+  <button class="btn-next" id="btn-next" onclick="goNext()">Siguiente &#8594;</button>
+</div>
+
+<!-- FINAL ACTIONS (solo en paso 6) -->
+<div class="final-pad" id="final-btns" style="display:none;">
+  <button class="btn-copy" id="btn-copy" onclick="copiar()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+    Copiar texto
+  </button>
+  <button class="btn-wapp" id="btn-wapp" onclick="enviarWapp()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <span id="wapp-label">Abrir en WhatsApp</span>
+  </button>
+  <button class="btn-nueva" onclick="nueva()">Nuevo requerimiento</button>
+</div>
+
+<script>
+const TOTAL = 7;
+let cur = 0;
+
+const OPTS_DEF = {
+  tipo_cliente:        { multi: false, items: ['Nuevo cliente','Cliente activo – CIP','Cliente activo – Silicon Access'] },
+  tipo_negocio:        { multi: false, items: ['Venta', 'Abono'] },
+  lugar_visualizacion: { multi: false, items: ['Búnker', 'Acceso', 'Desconocido'] },
+  iluminacion:         { multi: true,  items: ['Túnel', 'En Altura', 'No aplica'] },
+  analitica:           { multi: false, items: ['CIP Analytics', 'Otro'] },
+  quien_remueve:       { multi: false, items: ['Cliente', 'CIP'] },
+  modalidad_ces:       { multi: false, items: ['Abono', 'Venta'] },
+};
+
+const sel = {};
+Object.keys(OPTS_DEF).forEach(k => sel[k] = []);
+
+const STEP_NAMES = ['Identificación','Ubicación','Necesidad','Tecnología','Silicon Access','Cierre','Resumen'];
+
+function obtenerUbicacion() {
+  const btn = document.getElementById('btn-geo');
+  const status = document.getElementById('geo-status');
+  const input = document.getElementById('maps');
+
+  if (!navigator.geolocation) {
+    status.style.color = 'var(--orange)';
+    status.textContent = 'Tu navegador no soporta geolocalización.';
+    return;
+  }
+
+  // La API de geolocalización exige contexto seguro (HTTPS o localhost).
+  // Abrir el archivo como file:// o por HTTP bloquea el GPS sin mostrar el permiso.
+  if (!window.isSecureContext) {
+    status.style.color = 'var(--orange)';
+    status.innerHTML = 'La ubicación necesita conexión segura (HTTPS). ' +
+      'Estás abriendo el formulario localmente. Subilo a un sitio https:// ' +
+      '(GitHub Pages, Netlify, etc.) o pegá el link de Maps a mano.';
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.classList.remove('ok');
+  status.style.color = 'var(--text-hint)';
+  status.textContent = 'Obteniendo ubicación…';
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lng = pos.coords.longitude.toFixed(6);
+      input.value = `https://maps.google.com/?q=${lat},${lng}`;
+      input.classList.remove('field-error');
+      btn.classList.remove('loading');
+      btn.classList.add('ok');
+      status.style.color = 'var(--green)';
+      status.textContent = `✓ Coordenadas obtenidas (±${Math.round(pos.coords.accuracy)} m)`;
+      setTimeout(() => { btn.classList.remove('ok'); }, 3000);
+    },
+    err => {
+      btn.classList.remove('loading');
+      status.style.color = 'var(--orange)';
+      const msgs = {
+        1: 'Permiso denegado. Activá el acceso a ubicación para este sitio en los ajustes del navegador.',
+        2: 'No se pudo obtener la ubicación. Verificá que el GPS esté encendido.',
+        3: 'Tiempo de espera agotado. Intentá de nuevo en un lugar con mejor señal.'
+      };
+      status.textContent = msgs[err.code] || 'Error al obtener ubicación.';
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+}
+
+/* ---- CONTACT PICKER ---- */
+async function cargarContacto() {
+  const status = document.getElementById('contacto-status');
+  const btn = document.getElementById('btn-contacto');
+
+  // La Contact Picker API solo está en Android/Chrome y exige HTTPS.
+  if (!('contacts' in navigator) || !navigator.contacts || !navigator.contacts.select) {
+    status.style.color = 'var(--orange)';
+    status.textContent = 'Tu dispositivo no permite elegir contactos (disponible en Android con Chrome).';
+    return;
+  }
+  if (!window.isSecureContext) {
+    status.style.color = 'var(--orange)';
+    status.textContent = 'Necesita conexión segura (HTTPS). Subí el formulario a un sitio https://.';
+    return;
+  }
+
+  try {
+    const contacts = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+    if (!contacts || !contacts.length) return; // cancelado
+
+    const c = contacts[0];
+    const nombre = (c.name && c.name.length) ? c.name[0] : '';
+    const tel    = (c.tel  && c.tel.length)  ? c.tel[0]  : '';
+
+    if (nombre) {
+      const nEl = document.getElementById('contacto_nombre');
+      nEl.value = nombre;
+      nEl.classList.remove('field-error');
+    }
+    if (tel) {
+      const tEl = document.getElementById('contacto_tel');
+      tEl.value = tel;
+      tEl.classList.remove('field-error');
+    }
+    checkClearWarn();
+
+    btn.classList.add('ok');
+    status.style.color = 'var(--green)';
+    status.textContent = nombre || tel ? '✓ Contacto cargado' : 'El contacto no tenía datos disponibles.';
+    setTimeout(() => { btn.classList.remove('ok'); status.textContent = ''; }, 3000);
+  } catch (err) {
+    status.style.color = 'var(--orange)';
+    status.textContent = 'No se pudo acceder a los contactos.';
+  }
+}
+
+/* ---- COTIZACIONES LIST ---- */
+window._cotizaciones = [];
+
+function agregarCotizacion() {
+  const input = document.getElementById('coti-input');
+  const val = input.value.trim();
+  if (!val) { input.focus(); return; }
+  window._cotizaciones.push(val);
+  input.value = '';
+  input.focus();
+  renderCotizaciones();
+}
+
+function eliminarCotizacion(i) {
+  window._cotizaciones.splice(i, 1);
+  renderCotizaciones();
+}
+
+function renderCotizaciones() {
+  const list = document.getElementById('coti-list');
+  if (!list) return;
+
+  if (window._cotizaciones.length === 0) {
+    list.innerHTML = '<div class="coti-empty">Aún no hay ítems. Escribí uno y presioná <strong>Agregar</strong> o <strong>Enter</strong>.</div>';
+    return;
+  }
+
+  list.innerHTML = window._cotizaciones.map((item, i) =>
+    `<div class="coti-item">
+      <div class="coti-num">${i + 1}</div>
+      <span class="coti-text">${item.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>
+      <button class="coti-del" onclick="eliminarCotizacion(${i})" type="button" aria-label="Eliminar">×</button>
+    </div>`
+  ).join('');
+
+  // Clear validation error once list has items
+  const inp = document.getElementById('coti-input');
+  if (inp) { inp.classList.remove('field-error'); checkClearWarn(); }
+}
+
+/* ---- VALIDATION ---- */
+const STEP_VALIDATIONS = [
+  [ // s0: Identificación
+    { type:'text', id:'barrio',          label:'Barrio / obra' },
+    { type:'opts', id:'tipo_cliente',    label:'Tipo de cliente' },
+    { type:'text', id:'contacto_nombre', label:'Nombre del contacto' },
+    { type:'text', id:'contacto_tel',    label:'Teléfono del contacto' },
+  ],
+  [ // s1: Ubicación
+    { type:'text', id:'maps', label:'Link de Google Maps' },
+  ],
+  [ // s2: Necesidad
+    { type:'text', id:'necesidad',    label:'¿Qué busca cubrir?' },
+    { type:'opts', id:'tipo_negocio', label:'Tipo de negocio' },
+  ],
+  [ // s3: Tecnología y Alcance
+    { type:'opts', id:'lugar_visualizacion', label:'Lugar de visualización' },
+    { type:'opts', id:'modalidad_ces', label:'Modalidad CES',
+      condition: () => document.getElementById('ces_yn')?.classList.contains('on') },
+  ],
+  [ // s4: Silicon Access (solo si el toggle está activo)
+    { type:'text', id:'cant_accesos',    label:'Cantidad de Accesos',
+      condition: () => document.getElementById('silicon_toggle')?.classList.contains('on') },
+    { type:'text', id:'cant_carriles',   label:'Carriles vehiculares',
+      condition: () => document.getElementById('silicon_toggle')?.classList.contains('on') },
+    { type:'text', id:'cant_peatonales', label:'Accesos peatonales',
+      condition: () => document.getElementById('silicon_toggle')?.classList.contains('on') },
+    { type:'text', id:'cant_smartphones',label:'Smartphones',
+      condition: () => document.getElementById('silicon_toggle')?.classList.contains('on') },
+    { type:'text', id:'cant_barreras',   label:'Barreras a cotizar',
+      condition: () => document.getElementById('silicon_toggle')?.classList.contains('on') },
+  ],
+  [ // s5: Cierre
+    { type:'list', id:'coti-input', label:'Detalle de cotizaciones solicitadas' },
+    { type:'text', id:'comercial',  label:'Comercial responsable' },
+  ],
+];
+
+function validateStep(n) {
+  clearErrors();
+  const rules = STEP_VALIDATIONS[n];
+  if (!rules) return true;
+
+  const failed = rules.filter(r => {
+    if (r.condition && !r.condition()) return false;
+    if (r.type === 'text') return !(document.getElementById(r.id)?.value.trim());
+    if (r.type === 'opts') return !(sel[r.id]?.length > 0);
+    if (r.type === 'list') return !(window._cotizaciones?.length > 0);
+    return false;
+  });
+
+  if (!failed.length) return true;
+
+  // Mark invalid fields
+  failed.forEach(r => {
+    const el = document.getElementById(r.id);
+    if (el) el.classList.add('field-error');
+  });
+
+  // Show warning banner at top of step
+  const stepEl = document.getElementById('s' + n);
+  const warn = document.createElement('div');
+  warn.id = 'step-warn';
+  warn.className = 'warn';
+  warn.innerHTML = '<strong>Completá los campos requeridos:</strong><br>' +
+    failed.map(r => `· ${r.label}`).join('<br>');
+  stepEl.insertBefore(warn, stepEl.firstChild);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  return false;
+}
+
+function clearErrors() {
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+  const warn = document.getElementById('step-warn');
+  if (warn) warn.remove();
+}
+
+function checkClearWarn() {
+  const stepEl = document.getElementById('s' + cur);
+  if (stepEl && !stepEl.querySelector('.field-error')) {
+    const warn = document.getElementById('step-warn');
+    if (warn) warn.remove();
+  }
+}
+
+// Clear error on a field as soon as it's filled
+document.addEventListener('input', e => {
+  if (e.target.classList.contains('finput') && e.target.classList.contains('field-error')) {
+    if (e.target.value.trim()) { e.target.classList.remove('field-error'); checkClearWarn(); }
+  }
+});
+
+function buildOpts() {
+  Object.entries(OPTS_DEF).forEach(([key, cfg]) => {
+    const el = document.getElementById(key);
+    if (!el) return;
+    el.innerHTML = cfg.items.map(item => {
+      const esc = item.replace(/'/g, "\\'");
+      return `<div class="opt" onclick="toggleOpt(this,'${key}','${esc}',${cfg.multi})">
+        <div class="opt-box">
+          <svg class="opt-check" width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="2,6.5 5.5,10 11,3"/>
+          </svg>
+        </div>
+        <span class="opt-text">${item}</span>
+      </div>`;
+    }).join('');
+  });
+}
+
+const OPT_HOOKS = {
+  analitica: () => {
+    const wrap = document.getElementById('analitica_otro_wrap');
+    if (wrap) wrap.style.display = sel['analitica'].includes('Otro') ? 'block' : 'none';
+  }
+};
+
+const TOGGLE_HOOKS = {
+  ces_yn: () => {
+    const wrap = document.getElementById('modalidad_ces_wrap');
+    if (wrap) wrap.style.display = document.getElementById('ces_yn').classList.contains('on') ? 'block' : 'none';
+  },
+  tec_remueve: () => {
+    const wrap = document.getElementById('quien_remueve_wrap');
+    if (wrap) wrap.style.display = document.getElementById('tec_remueve').classList.contains('on') ? 'block' : 'none';
+  },
+  silicon_toggle: () => {
+    const wrap = document.getElementById('silicon_wrap');
+    if (wrap) wrap.style.display = document.getElementById('silicon_toggle').classList.contains('on') ? 'block' : 'none';
+  }
+};
+
+function toggleOpt(el, key, val, multi) {
+  if (!multi) {
+    document.getElementById(key).querySelectorAll('.opt').forEach(o => o.classList.remove('on'));
+    sel[key] = [val];
+  } else {
+    const idx = sel[key].indexOf(val);
+    if (idx >= 0) sel[key].splice(idx, 1);
+    else sel[key].push(val);
+  }
+  el.classList.toggle('on', sel[key].includes(val));
+  if (OPT_HOOKS[key]) OPT_HOOKS[key]();
+  // Clear error on this opts when a selection is made
+  const optsEl = document.getElementById(key);
+  if (optsEl && optsEl.classList.contains('field-error')) {
+    optsEl.classList.remove('field-error');
+    checkClearWarn();
+  }
+}
+
+function buildDots() {
+  const wrap = document.getElementById('dots');
+  wrap.innerHTML = STEP_NAMES.map((_, i) => {
+    let cls = 'dot';
+    if (i < cur) cls += ' done';
+    if (i === cur) cls += ' active';
+    const w = i === cur ? 22 : 6;
+    return `<div class="${cls}" style="width:${w}px"></div>`;
+  }).join('');
+  document.getElementById('prog-label').textContent =
+    `Paso ${cur + 1} de ${TOTAL} — ${STEP_NAMES[cur]}`;
+}
+
+function showStep(n) {
+  clearErrors();
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('s' + n).classList.add('active');
+  cur = n;
+  buildDots();
+
+  const isLast = n === TOTAL - 1;
+  document.getElementById('nav-bar').style.display = isLast ? 'none' : 'flex';
+  document.getElementById('final-btns').style.display = isLast ? 'block' : 'none';
+
+  const backBtn = document.getElementById('btn-back');
+  backBtn.style.visibility = n === 0 ? 'hidden' : 'visible';
+
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.textContent = n === TOTAL - 2 ? 'Ver resumen ✓' : 'Siguiente →';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goNext() {
+  if (!validateStep(cur)) return;
+  if (cur === TOTAL - 2) buildSummary();
+  showStep(cur + 1);
+}
+
+function goBack() {
+  showStep(Math.max(0, cur - 1));
+}
+
+function g(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+function s(key) { return sel[key] && sel[key].length ? sel[key].join(', ') : ''; }
+function chk(id) { const e = document.getElementById(id); return e && e.classList.contains('on') ? 'Sí' : 'No'; }
+function toggleCheck(el) {
+  el.classList.toggle('on');
+  if (TOGGLE_HOOKS[el.id]) TOGGLE_HOOKS[el.id]();
+}
+function analiticaVal() {
+  const tipo = s('analitica');
+  if (!tipo) return '';
+  if (tipo === 'Otro') { const d = g('analitica_otro'); return d ? `Otro: ${d}` : 'Otro'; }
+  return tipo;
+}
+
+function buildSummary() {
+  const sections = [
+    { title: 'Identificación', rows: [
+      ['Barrio / obra', g('barrio')],
+      ['Unidad', g('unidad')],
+      ['Tipo de cliente', s('tipo_cliente')],
+      ['Nombre del contacto', g('contacto_nombre')],
+      ['Teléfono del contacto', g('contacto_tel')],
+    ]},
+    { title: 'Ubicación', rows: [
+      ['Maps', g('maps')],
+      ['Referencia', g('referencia')],
+    ]},
+    { title: 'Necesidad', rows: [
+      ['Qué cubrir', g('necesidad')],
+      ['Tipo de negocio', s('tipo_negocio')],
+    ]},
+    { title: 'Tecnología', always: true, rows: [
+      ['Visualización', s('lugar_visualizacion')],
+      ['Iluminación', s('iluminacion')],
+      ['CES', chk('ces_yn')],
+      ['Modalidad CES', s('modalidad_ces')],
+      ['Analítica', analiticaVal()],
+      ['Cámaras térmicas', g('camaras_termicas')],
+    ]},
+    { title: 'Alcances', always: true, rows: [
+      ['Tec. existente – reutiliza', chk('tec_reutiliza')],
+      ['Tec. existente – se remueve', chk('tec_remueve')],
+      ['Quién remueve', s('quien_remueve')],
+    ]},
+    { title: 'Silicon Access', rows: [
+      ['Accesos', g('cant_accesos')],
+      ['Carriles vehiculares', g('cant_carriles')],
+      ['Accesos peatonales', g('cant_peatonales')],
+      ['Smartphones', g('cant_smartphones')],
+      ['Barreras a cotizar', g('cant_barreras')],
+      ['Aclaratorias', g('aclaratorias')],
+    ]},
+    { title: 'Notas y cierre', rows: [
+      ['Observaciones', g('notas')],
+      ['Cotizaciones solicitadas', (window._cotizaciones||[]).map((c,i) => `${i+1}. ${c}`).join('\n')],
+      ['Comercial', g('comercial')],
+      ['Fecha', g('fecha')],
+    ]},
+  ];
+
+  const html = sections.map(sec => {
+    const rows = sec.always
+      ? sec.rows.filter(r => r[1])          // toggle fields are always truthy
+      : sec.rows.filter(r => r[1]);
+    if (!rows.length && !sec.always) return '';
+    if (!rows.length) return '';
+    const rowsHtml = rows.map(r =>
+      `<div class="summ-row"><span class="summ-key">${r[0]}</span><span class="summ-val">${r[1]}</span></div>`
+    ).join('');
+    return `<div class="summ-card"><h3>${sec.title}</h3>${rowsHtml}</div>`;
+  }).join('');
+
+  document.getElementById('summ-content').innerHTML = html || '<p style="color:#94a3b8;font-size:14px">No hay datos cargados aún.</p>';
+
+  let txt = '📋 REQUERIMIENTO DE PREVENTA\n';
+  txt += '━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+  sections.forEach(sec => {
+    const rows = sec.rows.filter(r => r[1]);
+    if (!rows.length) return;
+    txt += `▸ ${sec.title.toUpperCase()}\n`;
+    rows.forEach(r => txt += `  ${r[0]}: ${r[1]}\n`);
+    txt += '\n';
+  });
+  window._txt = txt;
+}
+
+function copiar() {
+  if (!window._txt) return;
+  const btn = document.getElementById('btn-copy');
+  const orig = btn.innerHTML;
+  const done = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> ¡Copiado!`;
+
+  function success() {
+    btn.innerHTML = done;
+    btn.classList.add('ok');
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('ok'); }, 2500);
+  }
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(window._txt).then(success).catch(() => fallback());
+  } else {
+    fallback();
+  }
+
+  function fallback() {
+    const ta = document.createElement('textarea');
+    ta.value = window._txt;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); success(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+}
+
+/* ---- IMAGE HANDLING ---- */
+window._imgs = [];
+
+function addImages(input) {
+  const newFiles = Array.from(input.files);
+  window._imgs = window._imgs.concat(newFiles);
+  input.value = '';
+  renderThumbs();
+  updateShareBtn();
+}
+
+function removeImage(i) {
+  URL.revokeObjectURL(window._imgUrls[i]);
+  window._imgs.splice(i, 1);
+  renderThumbs();
+  updateShareBtn();
+}
+
+window._imgUrls = [];
+function renderThumbs() {
+  window._imgUrls.forEach(u => URL.revokeObjectURL(u));
+  window._imgUrls = window._imgs.map(f => URL.createObjectURL(f));
+
+  const container = document.getElementById('img-thumbs');
+  const countEl   = document.getElementById('img-count');
+  const addBtn    = document.getElementById('btn-img-add');
+  if (!container) return;
+
+  container.innerHTML = window._imgUrls.map((url, i) =>
+    `<div class="img-thumb-wrap">
+      <img class="img-thumb" src="${url}" alt="foto ${i+1}">
+      <button class="img-remove" onclick="removeImage(${i})" type="button" aria-label="Eliminar">✕</button>
+    </div>`
+  ).join('');
+
+  const n = window._imgs.length;
+  if (countEl) {
+    countEl.style.display = n ? 'block' : 'none';
+    countEl.textContent = `${n} foto${n !== 1 ? 's' : ''} adjunta${n !== 1 ? 's' : ''}`;
+  }
+  if (addBtn) addBtn.classList.toggle('has-imgs', n > 0);
+}
+
+function updateShareBtn() {
+  const label = document.getElementById('wapp-label');
+  if (!label) return;
+  const n = window._imgs.length;
+  label.textContent = n > 0
+    ? `Compartir (texto + ${n} foto${n !== 1 ? 's' : ''})`
+    : 'Abrir en WhatsApp';
+}
+
+async function enviarWapp() {
+  if (!window._txt) return;
+  const files = window._imgs || [];
+
+  if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+    try {
+      await navigator.share({ title: 'Requerimiento de Preventa', text: window._txt, files });
+    } catch(e) {
+      if (e.name !== 'AbortError') {
+        window.open('https://wa.me/?text=' + encodeURIComponent(window._txt), '_blank');
+      }
+    }
+  } else {
+    window.open('https://wa.me/?text=' + encodeURIComponent(window._txt), '_blank');
+  }
+}
+
+function nueva() {
+  if (!confirm('¿Limpiar el formulario y empezar de nuevo?')) return;
+  document.querySelectorAll('input, textarea').forEach(e => e.value = '');
+  document.querySelectorAll('.opt, .toggle-row').forEach(o => o.classList.remove('on'));
+  Object.keys(sel).forEach(k => sel[k] = []);
+  const wa = document.getElementById('analitica_otro_wrap');
+  if (wa) wa.style.display = 'none';
+  const wq = document.getElementById('quien_remueve_wrap');
+  if (wq) wq.style.display = 'none';
+  const wm = document.getElementById('modalidad_ces_wrap');
+  if (wm) wm.style.display = 'none';
+  const ws = document.getElementById('silicon_wrap');
+  if (ws) ws.style.display = 'none';
+  window._imgs = [];
+  renderThumbs();
+  updateShareBtn();
+  window._cotizaciones = [];
+  renderCotizaciones();
+  setFecha();
+  showStep(0);
+}
+
+function setFecha() {
+  const hoy = new Date();
+  const d = ('0' + hoy.getDate()).slice(-2);
+  const m = ('0' + (hoy.getMonth() + 1)).slice(-2);
+  const y = hoy.getFullYear();
+  document.getElementById('fecha').value = `${d}/${m}/${y}`;
+}
+
+buildOpts();
+setFecha();
+renderCotizaciones();
+showStep(0);
+</script>
+</body>
+</html>
