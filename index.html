@@ -1,18 +1,16 @@
-<!-- Copyright 2025 CIP. Todos los derechos reservados.
-     Uso interno. Prohibida su distribución o modificación
-     sin autorización expresa. -->
-
 <!DOCTYPE html>
+<!-- Requerimiento de Preventa Mobile · v1.7 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#1A3A5C" />
 <title>Requerimiento de Preventa</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --blue: #1A3A5C;
+  --blue-dark: #12314F;
   --blue-mid: #2E75B6;
   --blue-bg: #0F2640;
   --blue-light: #EBF3FA;
@@ -411,12 +409,55 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
   <div class="step-title">Identificación</div>
   <div class="step-sub">Datos básicos del cliente y la obra.</div>
   <div class="field">
-    <div class="flabel">Barrio / obra <span class="req">*</span></div>
+    <div class="flabel">Cliente <span class="req">*</span></div>
+    <input class="finput" id="cliente" type="text" placeholder="Ej: EIDICO, INCO, etc." autocomplete="off" />
+  </div>
+  <div class="field">
+    <div class="flabel">Barrio / Administración / Industria <span class="req">*</span></div>
     <input class="finput" id="barrio" type="text" placeholder="Ej: Los Robles" autocomplete="off" />
   </div>
   <div class="field">
-    <div class="flabel">Unidad de negocio</div>
-    <input class="finput" id="unidad" type="text" placeholder="Ej: EIDICO, cliente directo..." autocomplete="off" />
+    <div class="flabel">Unidad de negocio <span class="req">*</span></div>
+    <div class="opts" id="unidad_negocio"></div>
+  </div>
+  <div class="field">
+    <div class="flabel">Cantidad de lotes <span class="req">*</span></div>
+    <input class="finput" id="cant_lotes" type="number" min="0" placeholder="0" inputmode="numeric" autocomplete="off" />
+  </div>
+  <div class="field">
+    <div class="flabel">¿Posee control de acceso existente?</div>
+    <div class="toggle-row" id="posee_control_acceso" onclick="toggleCheck(this)">
+      <span class="toggle-text">Posee control de acceso existente</span>
+      <div class="toggle-switch"></div>
+    </div>
+    <div id="nombre_control_acceso_wrap" style="display:none; margin-top:9px">
+      <div class="flabel">Nombre del control de acceso <span class="req">*</span></div>
+      <input class="finput" id="nombre_control_acceso" type="text" placeholder="Ej: nombre del sistema / proveedor" autocomplete="off" />
+    </div>
+  </div>
+  <div class="field">
+    <div class="flabel">¿Posee empresa de seguridad física?</div>
+    <div class="toggle-row" id="posee_empresa_seguridad" onclick="toggleCheck(this)">
+      <span class="toggle-text">Posee empresa de seguridad física</span>
+      <div class="toggle-switch"></div>
+    </div>
+    <div id="nombre_empresa_seguridad_wrap" style="display:none; margin-top:9px">
+      <div class="flabel">Nombre de la empresa <span class="req">*</span></div>
+      <input class="finput" id="nombre_empresa_seguridad" type="text" placeholder="Ej: nombre de la empresa de seguridad" autocomplete="off" />
+    </div>
+  </div>
+  <div class="field">
+    <div class="flabel">¿Posee empresa de seguridad electrónica existente?</div>
+    <div class="toggle-row" id="posee_seguridad_electronica" onclick="toggleCheck(this)">
+      <span class="toggle-text">Posee empresa de seguridad electrónica existente</span>
+      <div class="toggle-switch"></div>
+    </div>
+    <div id="nombre_seguridad_electronica_wrap" style="display:none; margin-top:9px">
+      <div class="flabel">Nombre de la Empresa de Seguridad Electrónica <span class="req">*</span></div>
+      <input class="finput" id="nombre_seguridad_electronica" type="text" placeholder="Ej: nombre de la empresa" autocomplete="off" style="margin-bottom:12px" />
+      <div class="flabel">Meses restantes de contrato</div>
+      <input class="finput" id="meses_restantes_contrato_electronica" type="number" min="0" placeholder="0" inputmode="numeric" />
+    </div>
   </div>
   <div class="field">
     <div class="flabel">Tipo de cliente <span class="req">*</span></div>
@@ -476,10 +517,8 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
 
 <!-- PASO 3: Tecnología y Alcance -->
 <div class="step" id="s3">
-  <div class="step-title">Tecnología y Alcance</div>
-  <div class="step-sub">Especificá los componentes y el alcance del proyecto.</div>
-
-  <div class="section-label">Tecnología</div>
+  <div class="step-title">Tecnología</div>
+  <div class="step-sub">Especificá los componentes tecnológicos del proyecto.</div>
 
   <div class="field">
     <div class="flabel">Lugar de visualización de las cámaras <span class="req">*</span></div>
@@ -488,6 +527,18 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
   <div class="field">
     <div class="flabel">Iluminación</div>
     <div class="opts" id="iluminacion"></div>
+  </div>
+  <div class="field">
+    <div class="flabel">Iluminación deportiva</div>
+    <div class="toggle-row" id="ilum_deportiva_toggle" onclick="toggleCheck(this)">
+      <span class="toggle-text">Iluminación deportiva</span>
+      <div class="toggle-switch"></div>
+    </div>
+    <div id="ilum_deportiva_wrap" style="display:none; margin-top:12px">
+      <div class="flabel">Tipo de cancha - Seleccione <span class="req">*</span></div>
+      <div class="opts" id="deporte_tipo"></div>
+      <div id="deporte_detalles" style="margin-top:12px"></div>
+    </div>
   </div>
   <div class="field">
     <div class="flabel">Cerco eléctrico de Seguridad</div>
@@ -503,6 +554,40 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
     </div>
   </div>
   <div class="field">
+    <div class="flabel">Cámaras en Acceso</div>
+    <div class="toggle-row" id="vss_acceso_toggle" onclick="toggleCheck(this)">
+      <span class="toggle-text">VSS en Acceso</span>
+      <div class="toggle-switch"></div>
+    </div>
+    <div id="vss_acceso_wrap" style="display:none; margin-top:9px">
+      <div class="toggle-row" id="vss_acceso_guardia_toggle" onclick="toggleCheck(this)">
+        <span class="toggle-text">Visualización en Guardia?</span>
+        <div class="toggle-switch"></div>
+      </div>
+      <div class="field" style="margin-top:12px; margin-bottom:0">
+        <div class="flabel">Alcance</div>
+        <div class="opts" id="vss_acceso_alcance"></div>
+        <div id="vss_acceso_otro_wrap" style="display:none; margin-top:9px">
+          <div class="flabel">Especificar <span class="req">*</span></div>
+          <input class="finput" id="vss_acceso_otro" type="text" placeholder="Ej: Cámaras en todas las Guardias" autocomplete="off" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="flabel">Islas</div>
+    <div class="toggle-row" id="islas_toggle" onclick="toggleCheck(this)">
+      <span class="toggle-text">Islas</span>
+      <div class="toggle-switch"></div>
+    </div>
+    <div id="islas_wrap" style="display:none; margin-top:9px">
+      <div class="flabel">Cantidad <span class="req">*</span></div>
+      <input class="finput" id="islas_cantidad" type="number" min="0" placeholder="0" inputmode="numeric" style="margin-bottom:12px" />
+      <div class="flabel">Modalidad <span class="req">*</span></div>
+      <div class="opts" id="islas_modalidad"></div>
+    </div>
+  </div>
+  <div class="field">
     <div class="flabel">Analítica</div>
     <div class="opts" id="analitica"></div>
     <div id="analitica_otro_wrap" style="display:none; margin-top:9px">
@@ -514,30 +599,6 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
     <input class="finput" id="camaras_termicas" type="text" placeholder="Ej: bajo los puentes, lagos, frente, etc." autocomplete="off" />
     <div class="hint">Completar solo si aplica cámaras térmicas en un sector puntual.</div>
   </div>
-
-  <div class="divider"></div>
-  <div class="section-label">Alcances</div>
-
-  <div class="field">
-    <div class="flabel">Tecnología existente en el sitio</div>
-    <div class="toggle-row" id="tec_reutiliza" onclick="toggleCheck(this)" style="margin-bottom:9px">
-      <span class="toggle-text">Se intenta reutilizar</span>
-      <div class="toggle-switch"></div>
-    </div>
-    <div class="toggle-row" id="tec_remueve" onclick="toggleCheck(this)">
-      <span class="toggle-text">Se remueve</span>
-      <div class="toggle-switch"></div>
-    </div>
-  </div>
-  <div id="quien_remueve_wrap" style="display:none">
-    <div class="field">
-      <div class="flabel">¿Quién la remueve?</div>
-      <div class="opts" id="quien_remueve"></div>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
 </div>
 
 <!-- PASO 4: Silicon Access -->
@@ -572,16 +633,78 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
       <div class="flabel">Cantidad de Barreras a cotizar <span class="req">*</span></div>
       <input class="finput" id="cant_barreras" type="number" min="0" placeholder="0" inputmode="numeric" />
     </div>
+    <div class="field">
+      <div class="flabel">Adicional Cámaras LPR</div>
+      <div class="toggle-row" id="lpr_toggle" onclick="toggleCheck(this)">
+        <span class="toggle-text">Cámaras LPR</span>
+        <div class="toggle-switch"></div>
+      </div>
+      <div id="lpr_wrap" style="display:none; margin-top:9px">
+        <div class="flabel">Cantidad <span class="req">*</span></div>
+        <input class="finput" id="lpr_cantidad" type="number" min="0" placeholder="0" inputmode="numeric" />
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel">Adicional Anti Tail Gating</div>
+      <div class="toggle-row" id="atg_toggle" onclick="toggleCheck(this)">
+        <span class="toggle-text">Anti Tail Gating</span>
+        <div class="toggle-switch"></div>
+      </div>
+      <div id="atg_wrap" style="display:none; margin-top:9px">
+        <div class="flabel">Cantidad <span class="req">*</span></div>
+        <input class="finput" id="atg_cantidad" type="number" min="0" placeholder="0" inputmode="numeric" />
+        <div class="hint">Recordar que es 1 ATG por carril.</div>
+      </div>
+    </div>
     <div class="divider"></div>
     <div class="field">
       <div class="flabel">Aclaratorias</div>
       <textarea class="finput" id="aclaratorias" placeholder="Ej: Face ID para todos los carriles"></textarea>
     </div>
   </div>
+
+  <div class="divider"></div>
+  <div class="field">
+    <div class="flabel">Radares / Carteles vehiculares</div>
+    <div class="toggle-row" id="radares_carteles_toggle" onclick="toggleCheck(this)">
+      <span class="toggle-text">Radares / Carteles vehiculares</span>
+      <div class="toggle-switch"></div>
+    </div>
+    <div id="radares_carteles_wrap" style="display:none; margin-top:9px">
+      <div class="flabel">Radares vehiculares — Cantidad</div>
+      <input class="finput" id="radares_cantidad" type="number" min="0" placeholder="0" inputmode="numeric" oninput="checkRadaresCarteles()" style="margin-bottom:4px" />
+      <div class="hint" style="margin-bottom:12px">Puede ser 0. Al menos una de las dos cantidades (radares o carteles) debe ser mayor a 0.</div>
+      <div class="flabel">Carteles vehiculares — Cantidad</div>
+      <input class="finput" id="carteles_cantidad" type="number" min="0" placeholder="0" inputmode="numeric" oninput="checkRadaresCarteles()" />
+    </div>
+  </div>
 </div>
 
-<!-- PASO 5: Cierre -->
+<!-- PASO 5: Alcances -->
 <div class="step" id="s5">
+  <div class="step-title">Alcances</div>
+  <div class="step-sub">Tecnología existente en el sitio</div>
+  <div class="field">
+    <div class="flabel">Tecnología existente en el sitio</div>
+    <div class="toggle-row" id="tec_reutiliza" onclick="toggleCheck(this)" style="margin-bottom:9px">
+      <span class="toggle-text">Se intenta reutilizar</span>
+      <div class="toggle-switch"></div>
+    </div>
+    <div class="toggle-row" id="tec_remueve" onclick="toggleCheck(this)">
+      <span class="toggle-text">Se remueve</span>
+      <div class="toggle-switch"></div>
+    </div>
+  </div>
+  <div id="quien_remueve_wrap" style="display:none">
+    <div class="field">
+      <div class="flabel">¿Quién la remueve?</div>
+      <div class="opts" id="quien_remueve"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PASO 6: Cierre -->
+<div class="step" id="s6">
   <div class="step-title">Notas y cierre</div>
   <div class="step-sub">Último paso antes del resumen.</div>
   <div class="field">
@@ -590,6 +713,11 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
   </div>
   <div class="field">
     <div class="flabel">Detalle de cotizaciones solicitadas <span class="req">*</span></div>
+    <button class="btn-img-add" id="btn-precargar" onclick="precargarSugeridas()" type="button" style="margin-bottom:10px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Precargar sugeridas según selecciones
+    </button>
+    <div class="hint" id="precarga-msg" style="display:none; margin-bottom:10px"></div>
     <div class="coti-row">
       <input class="finput" id="coti-input" type="text"
         placeholder="Ej: VSS perímetro completo"
@@ -622,8 +750,8 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
   </div>
 </div>
 
-<!-- PASO 6: Resumen -->
-<div class="step" id="s6">
+<!-- PASO 7: Resumen -->
+<div class="step" id="s7">
   <div class="step-title">Resumen listo ✓</div>
   <div class="step-sub">Revisá y enviá a Preventa.</div>
   <div id="summ-content"></div>
@@ -637,6 +765,7 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
 
 <!-- FINAL ACTIONS (solo en paso 6) -->
 <div class="final-pad" id="final-btns" style="display:none;">
+  <button class="btn-nueva" id="btn-volver-resumen" onclick="goBack()" type="button" style="margin-bottom:10px">&#8592; Volver</button>
   <button class="btn-copy" id="btn-copy" onclick="copiar()" type="button">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
     Copiar texto
@@ -645,27 +774,63 @@ textarea.finput { min-height: 90px; resize: vertical; line-height: 1.5; }
     <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
     <span id="wapp-label">Abrir en WhatsApp</span>
   </button>
+  <div class="geo-status" id="wapp-status" style="margin-bottom:10px"></div>
   <button class="btn-nueva" onclick="nueva()" type="button">Nuevo requerimiento</button>
 </div>
 
 <script>
-const TOTAL = 7;
+const TOTAL = 8;
 let cur = 0;
 
 const OPTS_DEF = {
   tipo_cliente:        { multi: false, items: ['Nuevo cliente','Cliente activo – CIP','Cliente activo – Silicon Access'] },
-  tipo_negocio:        { multi: false, items: ['Venta', 'Abono'] },
-  lugar_visualizacion: { multi: false, items: ['Búnker', 'Acceso', 'Desconocido'] },
-  iluminacion:         { multi: true,  items: ['Túnel', 'En Altura', 'No aplica'] },
+  unidad_negocio:      { multi: false, items: ['CIP', 'Silicon Access'] },
+  tipo_negocio:        { multi: true,  items: ['Venta', 'Abono'] },
+  lugar_visualizacion: { multi: false, items: ['Búnker', 'Acceso', 'Forense', 'Desconocido'] },
+  iluminacion:         { multi: true,  items: ['Túnel', 'En Altura', 'Mixta'] },
+  deporte_tipo:        { multi: true,  items: ['Tenis', 'Padel', 'Basquet', 'Futbol 5', 'Futbol 7', 'Futbol 11'] },
   analitica:           { multi: false, items: ['CIP Analytics', 'Otro'] },
+  vss_acceso_alcance:  { multi: false, items: ['Solo Acceso Principal', 'Otro'] },
+  islas_modalidad:     { multi: true,  items: ['Offline', 'Online'] },
   quien_remueve:       { multi: false, items: ['Cliente', 'CIP'] },
-  modalidad_ces:       { multi: false, items: ['Abono', 'Venta'] },
+  modalidad_ces:       { multi: true,  items: ['Abono', 'Venta'] },
 };
 
 const sel = {};
 Object.keys(OPTS_DEF).forEach(k => sel[k] = []);
 
-const STEP_NAMES = ['Identificación','Ubicación','Necesidad','Tecnología','Silicon Access','Cierre','Resumen'];
+// Configuración de "Iluminación deportiva": qué campos adicionales corresponden
+// a cada disciplina (potencia a elegir y/o medidas de la cancha).
+const DEPORTE_CONFIG = {
+  'Tenis':     { potencia: ['Media (1.600W)', 'Alta (2.000W)'] },
+  'Padel':     {},
+  'Basquet':   {},
+  'Futbol 5':  { potencia: ['Media (2.000W)', 'Alta (2.400W)'], medidas: true },
+  'Futbol 7':  { medidas: true },
+  'Futbol 11': { potencia: ['Media (11.200W)', 'Alta (16.000W)'], medidas: true },
+};
+function deporteKey(dep) {
+  return dep.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '_');
+}
+
+const STEP_NAMES = ['Identificación','Ubicación','Necesidad','Tecnología','Silicon Access','Alcances','Cierre','Resumen'];
+
+// Todos los pasos existentes (índices de s0..s7). Los pasos 3 (Tecnología/CIP)
+// y 4 (Silicon Access) se muestran según la "Unidad de negocio" elegida.
+// El paso 5 (Alcances) se ve siempre, sea CIP o Silicon Access.
+const ALL_STEPS = [0, 1, 2, 3, 4, 5, 6, 7];
+function getActiveSteps() {
+  const unidad = (sel['unidad_negocio'] && sel['unidad_negocio'][0]) || '';
+  return ALL_STEPS.filter(i => {
+    if (i === 3) return unidad === 'CIP';            // Paso Tecnología → solo CIP
+    if (i === 4) return unidad === 'Silicon Access'; // Paso Silicon Access → solo Silicon Access
+    return true;
+  });
+}
+function siliconOn() {
+  const t = document.getElementById('silicon_toggle');
+  return !!(t && t.classList.contains('on'));
+}
 
 function obtenerUbicacion() {
   const btn = document.getElementById('btn-geo');
@@ -769,14 +934,131 @@ async function cargarContacto() {
 /* ---- COTIZACIONES LIST ---- */
 window._cotizaciones = [];
 
+// Prefijo automático según la Unidad de negocio elegida en el paso 0.
+function unidadPrefix() {
+  const u = (sel['unidad_negocio'] && sel['unidad_negocio'][0]) || '';
+  if (u === 'Silicon Access') return 'Silicon Access - ';
+  if (u === 'CIP') return 'CIP - ';
+  return '';
+}
+
 function agregarCotizacion() {
   const input = document.getElementById('coti-input');
   const val = input.value.trim();
   if (!val) { input.focus(); return; }
-  window._cotizaciones.push(val);
+  const prefix = unidadPrefix();
+  const texto = (prefix && !val.startsWith(prefix)) ? prefix + val : val;
+  window._cotizaciones.push(texto);
   input.value = '';
   input.focus();
   renderCotizaciones();
+}
+
+// Traduce el nombre de una disciplina al texto usado en el detalle de
+// cotización: los deportes de cancha usan "Cancha <deporte>", el resto
+// (Tenis/Padel/Basquet) usa su nombre tal cual.
+function deporteNombreCoti(dep) {
+  return ['Tenis', 'Padel', 'Basquet'].includes(dep) ? dep : `Cancha ${dep.toLowerCase()}`;
+}
+
+// Arma la lista de ítems sugeridos para "Detalle de cotizaciones solicitadas"
+// en base a lo cargado hasta el momento en el formulario, según la Unidad de
+// negocio (CIP o Silicon Access).
+function generarSugeridas() {
+  const u = (sel['unidad_negocio'] && sel['unidad_negocio'][0]) || '';
+  const items = [];
+
+  if (u === 'Silicon Access') {
+    if (siliconOn()) {
+      const barreras = g('cant_barreras');
+      items.push(`Silicon Access - Base${barreras ? ' + ' + barreras + ' Barreras Vehiculares' : ''}`);
+    }
+    if (document.getElementById('lpr_toggle')?.classList.contains('on')) {
+      const cant = g('lpr_cantidad') || '0';
+      items.push(`Silicon Access - Adicional - ${cant} Camaras LPR + Licencia Anual`);
+    }
+    if (document.getElementById('atg_toggle')?.classList.contains('on')) {
+      const cant = g('atg_cantidad') || '0';
+      items.push(`Silicon Access - Adicional - ${cant} Anti-tailgaiting`);
+    }
+    if (document.getElementById('radares_carteles_toggle')?.classList.contains('on')) {
+      const n = parseFloat(g('radares_cantidad')) || 0;
+      const m = parseFloat(g('carteles_cantidad')) || 0;
+      let partes = [];
+      if (n > 0) partes.push(`${n} Radares de velocidad`);
+      if (m > 0) partes.push(`${m} carteles de velocidad`);
+      if (partes.length) items.push(`Silicon Access - ${partes.join(' y ')} (alquiler)`);
+    }
+  } else if (u === 'CIP') {
+    (sel['iluminacion'] || []).forEach(tipo => {
+      items.push(`CIP - Adicional - Iluminación ${tipo}`);
+    });
+    if (document.getElementById('ces_yn')?.classList.contains('on')) {
+      const modalidades = sel['modalidad_ces'] || [];
+      if (modalidades.includes('Venta')) items.push('CIP - Adicional - CES (venta)');
+      if (modalidades.includes('Abono')) items.push('CIP - Adicional - CES (Alquiler)');
+    }
+    if (document.getElementById('vss_acceso_toggle')?.classList.contains('on')) {
+      const alcance = sel['vss_acceso_alcance'] || [];
+      if (alcance.includes('Solo Acceso Principal')) {
+        items.push('CIP - Adicional - VSS Acceso Principal');
+      }
+      if (alcance.includes('Otro')) {
+        const otro = g('vss_acceso_otro');
+        if (otro) items.push(`CIP - Adicional - VSS ${otro}`);
+      }
+    }
+    if (document.getElementById('islas_toggle')?.classList.contains('on')) {
+      const cant = g('islas_cantidad') || '0';
+      const modalidad = sel['islas_modalidad'] || [];
+      if (modalidad.includes('Offline')) items.push(`CIP - Adicional - ${cant} Islas Offline`);
+      if (modalidad.includes('Online'))  items.push(`CIP - Adicional - ${cant} Islas Online`);
+    }
+    if ((sel['analitica'] || []).includes('CIP Analytics')) {
+      items.push('CIP - Adicional - CIP Analytics');
+    }
+    if (document.getElementById('ilum_deportiva_toggle')?.classList.contains('on')) {
+      const deportes = sel['deporte_tipo'] || [];
+      if (deportes.length) {
+        const partes = deportes.map(dep => {
+          const key = deporteKey(dep);
+          const cant = g('deporte_cant_' + key) || '0';
+          return `${cant} ${deporteNombreCoti(dep)}`;
+        });
+        items.push(`CIP - Iluminación deportiva - ${partes.join(', ')}`);
+      }
+    }
+  }
+
+  return items;
+}
+
+function precargarSugeridas() {
+  const items = generarSugeridas();
+  const msg = document.getElementById('precarga-msg');
+  const nuevos = items.filter(it => !window._cotizaciones.includes(it));
+
+  if (!nuevos.length) {
+    if (msg) {
+      msg.textContent = items.length
+        ? 'Esos ítems sugeridos ya están cargados.'
+        : 'No hay selecciones para sugerir todavía. Completá Unidad de negocio y las opciones de Tecnología / Silicon Access primero.';
+      msg.style.display = 'block';
+      clearTimeout(window._precargaMsgTimer);
+      window._precargaMsgTimer = setTimeout(() => { msg.style.display = 'none'; }, 4000);
+    }
+    return;
+  }
+
+  nuevos.forEach(it => window._cotizaciones.push(it));
+  renderCotizaciones();
+
+  if (msg) {
+    msg.textContent = `Se agregaron ${nuevos.length} ítem${nuevos.length > 1 ? 's' : ''} sugerido${nuevos.length > 1 ? 's' : ''}.`;
+    msg.style.display = 'block';
+    clearTimeout(window._precargaMsgTimer);
+    window._precargaMsgTimer = setTimeout(() => { msg.style.display = 'none'; }, 4000);
+  }
 }
 
 function eliminarCotizacion(i) {
@@ -809,7 +1091,16 @@ function renderCotizaciones() {
 /* ---- VALIDATION ---- */
 const STEP_VALIDATIONS = [
   [ // s0: Identificación
-    { type:'text', id:'barrio',          label:'Barrio / obra' },
+    { type:'text', id:'cliente',         label:'Cliente' },
+    { type:'text', id:'barrio',          label:'Barrio / Administración / Industria' },
+    { type:'opts', id:'unidad_negocio',  label:'Unidad de negocio' },
+    { type:'text', id:'cant_lotes',      label:'Cantidad de lotes' },
+    { type:'text', id:'nombre_control_acceso', label:'Nombre del control de acceso',
+      condition: () => document.getElementById('posee_control_acceso')?.classList.contains('on') },
+    { type:'text', id:'nombre_empresa_seguridad', label:'Nombre de la empresa',
+      condition: () => document.getElementById('posee_empresa_seguridad')?.classList.contains('on') },
+    { type:'text', id:'nombre_seguridad_electronica', label:'Nombre de la Empresa de Seguridad Electrónica',
+      condition: () => document.getElementById('posee_seguridad_electronica')?.classList.contains('on') },
     { type:'opts', id:'tipo_cliente',    label:'Tipo de cliente' },
     { type:'text', id:'contacto_nombre', label:'Nombre del contacto' },
     { type:'text', id:'contacto_tel',    label:'Teléfono del contacto' },
@@ -821,10 +1112,17 @@ const STEP_VALIDATIONS = [
     { type:'text', id:'necesidad',    label:'¿Qué busca cubrir?' },
     { type:'opts', id:'tipo_negocio', label:'Tipo de negocio' },
   ],
-  [ // s3: Tecnología y Alcance
+  [ // s3: Tecnología
     { type:'opts', id:'lugar_visualizacion', label:'Lugar de visualización' },
     { type:'opts', id:'modalidad_ces', label:'Modalidad CES',
       condition: () => document.getElementById('ces_yn')?.classList.contains('on') },
+    { type:'text', id:'vss_acceso_otro', label:'Cámaras en Acceso — Especificar',
+      condition: () => document.getElementById('vss_acceso_toggle')?.classList.contains('on') &&
+                        (sel['vss_acceso_alcance']||[]).includes('Otro') },
+    { type:'text', id:'islas_cantidad', label:'Islas — Cantidad',
+      condition: () => document.getElementById('islas_toggle')?.classList.contains('on') },
+    { type:'opts', id:'islas_modalidad', label:'Islas — Modalidad',
+      condition: () => document.getElementById('islas_toggle')?.classList.contains('on') },
   ],
   [ // s4: Silicon Access (solo si el toggle está activo)
     { type:'text', id:'cant_accesos',    label:'Cantidad de Accesos',
@@ -837,8 +1135,19 @@ const STEP_VALIDATIONS = [
       condition: () => document.getElementById('silicon_toggle')?.classList.contains('on') },
     { type:'text', id:'cant_barreras',   label:'Barreras a cotizar',
       condition: () => document.getElementById('silicon_toggle')?.classList.contains('on') },
+    { type:'text', id:'lpr_cantidad',    label:'Adicional Cámaras LPR – Cantidad',
+      condition: () => siliconOn() && document.getElementById('lpr_toggle')?.classList.contains('on') },
+    { type:'text', id:'atg_cantidad',    label:'Adicional Anti Tail Gating – Cantidad',
+      condition: () => siliconOn() && document.getElementById('atg_toggle')?.classList.contains('on') },
+    { type:'custom', label:'Radares / Carteles vehiculares — al menos 1 cantidad mayor a 0',
+      markIds: ['radares_cantidad','carteles_cantidad'],
+      test: () => (parseFloat(document.getElementById('radares_cantidad')?.value) || 0) > 0 ||
+                  (parseFloat(document.getElementById('carteles_cantidad')?.value) || 0) > 0,
+      condition: () => document.getElementById('radares_carteles_toggle')?.classList.contains('on') },
   ],
-  [ // s5: Cierre
+  [ // s5: Alcances (sin campos obligatorios)
+  ],
+  [ // s6: Cierre
     { type:'list', id:'coti-input', label:'Detalle de cotizaciones solicitadas' },
     { type:'text', id:'comercial',  label:'Comercial responsable' },
   ],
@@ -846,14 +1155,17 @@ const STEP_VALIDATIONS = [
 
 function validateStep(n) {
   clearErrors();
-  const rules = STEP_VALIDATIONS[n];
-  if (!rules) return true;
+  const base = STEP_VALIDATIONS[n];
+  let rules = base ? base.slice() : [];
+  if (n === 3) rules = rules.concat(deporteValidationRules());
+  if (!rules.length) return true;
 
   const failed = rules.filter(r => {
     if (r.condition && !r.condition()) return false;
     if (r.type === 'text') return !(document.getElementById(r.id)?.value.trim());
     if (r.type === 'opts') return !(sel[r.id]?.length > 0);
     if (r.type === 'list') return !(window._cotizaciones?.length > 0);
+    if (r.type === 'custom') return !r.test();
     return false;
   });
 
@@ -861,8 +1173,16 @@ function validateStep(n) {
 
   // Mark invalid fields
   failed.forEach(r => {
-    const el = document.getElementById(r.id);
-    if (el) el.classList.add('field-error');
+    if (r.id) {
+      const el = document.getElementById(r.id);
+      if (el) el.classList.add('field-error');
+    }
+    if (r.markIds) {
+      r.markIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('field-error');
+      });
+    }
   });
 
   // Show warning banner at top of step
@@ -895,6 +1215,7 @@ function checkClearWarn() {
 // Clear error on a field as soon as it's filled
 document.addEventListener('input', e => {
   if (e.target.id === 'coti-input') return; // validación basada en la lista, no en el input
+  if (e.target.id === 'radares_cantidad' || e.target.id === 'carteles_cantidad') return; // manejado por checkRadaresCarteles()
   if (e.target.classList.contains('finput') && e.target.classList.contains('field-error')) {
     if (e.target.value.trim()) { e.target.classList.remove('field-error'); checkClearWarn(); }
   }
@@ -918,26 +1239,120 @@ function buildOpts() {
   });
 }
 
+// Renderiza, para cada disciplina seleccionada en "Iluminación deportiva",
+// su tarjeta con Cantidad (siempre), Potencia (Tenis/Futbol 5/Futbol 11) y
+// Medidas (Futbol 5/Futbol 7/Futbol 11).
+function renderDeporteDetalles() {
+  const cont = document.getElementById('deporte_detalles');
+  if (!cont) return;
+  const seleccionados = sel['deporte_tipo'] || [];
+
+  if (!seleccionados.length) {
+    cont.innerHTML = '<div class="hint">Seleccioná al menos una disciplina para cargar sus datos.</div>';
+    return;
+  }
+
+  cont.innerHTML = seleccionados.map(dep => {
+    const key = deporteKey(dep);
+    const cfg = DEPORTE_CONFIG[dep] || {};
+    const potKey = `deporte_potencia_${key}`;
+    if (!sel[potKey]) sel[potKey] = [];
+
+    let html = `<div class="field" style="border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:14px;background:var(--white);margin-bottom:10px">
+      <div class="flabel" style="margin-bottom:12px">${esc(dep)}</div>
+      <div class="field" style="margin-bottom:${(cfg.potencia || cfg.medidas) ? '14px' : '0'}">
+        <div class="flabel">Cantidad <span class="req">*</span></div>
+        <input class="finput" id="deporte_cant_${key}" type="number" min="0" placeholder="0" inputmode="numeric" />
+      </div>`;
+
+    if (cfg.potencia) {
+      html += `<div class="field" style="margin-bottom:${cfg.medidas ? '14px' : '0'}">
+        <div class="flabel">Potencia <span class="req">*</span></div>
+        <div class="opts" id="${potKey}">
+          ${cfg.potencia.map(p => {
+            const on = sel[potKey].includes(p) ? ' on' : '';
+            const escp = p.replace(/'/g, "\\'");
+            return `<div class="opt${on}" onclick="toggleOpt(this,'${potKey}','${escp}',false)">
+              <div class="opt-box"><svg class="opt-check" width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="2,6.5 5.5,10 11,3"/></svg></div>
+              <span class="opt-text">${p}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }
+
+    if (cfg.medidas) {
+      html += `<div class="field" style="margin-bottom:0">
+        <div class="flabel">Medidas</div>
+        <input class="finput" id="deporte_medidas_${key}" type="text" placeholder="Ej: 20m x 40m" autocomplete="off" />
+      </div>`;
+    }
+
+    html += `</div>`;
+    return html;
+  }).join('');
+}
+
+function deporteValidationRules() {
+  if (!document.getElementById('ilum_deportiva_toggle')?.classList.contains('on')) return [];
+  const rules = [{ type: 'opts', id: 'deporte_tipo', label: 'Iluminación deportiva – Tipo de cancha' }];
+  (sel['deporte_tipo'] || []).forEach(dep => {
+    const key = deporteKey(dep);
+    const cfg = DEPORTE_CONFIG[dep] || {};
+    rules.push({ type: 'text', id: `deporte_cant_${key}`, label: `${dep} — Cantidad` });
+    if (cfg.potencia) rules.push({ type: 'opts', id: `deporte_potencia_${key}`, label: `${dep} — Potencia` });
+  });
+  return rules;
+}
+
+function deporteResumenTexto() {
+  if (!document.getElementById('ilum_deportiva_toggle')?.classList.contains('on')) return '';
+  const list = sel['deporte_tipo'] || [];
+  if (!list.length) return '';
+  return list.map(dep => {
+    const key = deporteKey(dep);
+    const cfg = DEPORTE_CONFIG[dep] || {};
+    const parts = [`Cantidad: ${g('deporte_cant_' + key) || '-'}`];
+    if (cfg.potencia) parts.push(`Potencia: ${s('deporte_potencia_' + key) || '-'}`);
+    if (cfg.medidas) { const m = g('deporte_medidas_' + key); if (m) parts.push(`Medidas: ${m}`); }
+    return `${dep} (${parts.join(', ')})`;
+  }).join('\n');
+}
+
 const OPT_HOOKS = {
   analitica: () => {
     const wrap = document.getElementById('analitica_otro_wrap');
     if (wrap) wrap.style.display = sel['analitica'].includes('Otro') ? 'block' : 'none';
-  }
+  },
+  vss_acceso_alcance: () => {
+    const wrap = document.getElementById('vss_acceso_otro_wrap');
+    if (wrap) wrap.style.display = sel['vss_acceso_alcance'].includes('Otro') ? 'block' : 'none';
+  },
+  deporte_tipo: () => { renderDeporteDetalles(); },
+  // Al cambiar la Unidad de negocio cambian los pasos visibles: refrescamos el
+  // indicador de progreso para que "Paso X de Y" refleje el nuevo recorrido.
+  unidad_negocio: () => { buildDots(); }
 };
 
+function toggleWrap(toggleId, wrapId) {
+  const wrap = document.getElementById(wrapId);
+  const t = document.getElementById(toggleId);
+  if (wrap && t) wrap.style.display = t.classList.contains('on') ? 'block' : 'none';
+}
+
 const TOGGLE_HOOKS = {
-  ces_yn: () => {
-    const wrap = document.getElementById('modalidad_ces_wrap');
-    if (wrap) wrap.style.display = document.getElementById('ces_yn').classList.contains('on') ? 'block' : 'none';
-  },
-  tec_remueve: () => {
-    const wrap = document.getElementById('quien_remueve_wrap');
-    if (wrap) wrap.style.display = document.getElementById('tec_remueve').classList.contains('on') ? 'block' : 'none';
-  },
-  silicon_toggle: () => {
-    const wrap = document.getElementById('silicon_wrap');
-    if (wrap) wrap.style.display = document.getElementById('silicon_toggle').classList.contains('on') ? 'block' : 'none';
-  }
+  ces_yn: () => toggleWrap('ces_yn', 'modalidad_ces_wrap'),
+  vss_acceso_toggle: () => toggleWrap('vss_acceso_toggle', 'vss_acceso_wrap'),
+  islas_toggle: () => toggleWrap('islas_toggle', 'islas_wrap'),
+  tec_remueve: () => toggleWrap('tec_remueve', 'quien_remueve_wrap'),
+  silicon_toggle: () => toggleWrap('silicon_toggle', 'silicon_wrap'),
+  ilum_deportiva_toggle: () => { toggleWrap('ilum_deportiva_toggle', 'ilum_deportiva_wrap'); renderDeporteDetalles(); },
+  posee_control_acceso: () => toggleWrap('posee_control_acceso', 'nombre_control_acceso_wrap'),
+  posee_empresa_seguridad: () => toggleWrap('posee_empresa_seguridad', 'nombre_empresa_seguridad_wrap'),
+  posee_seguridad_electronica: () => toggleWrap('posee_seguridad_electronica', 'nombre_seguridad_electronica_wrap'),
+  lpr_toggle: () => toggleWrap('lpr_toggle', 'lpr_wrap'),
+  atg_toggle: () => toggleWrap('atg_toggle', 'atg_wrap'),
+  radares_carteles_toggle: () => toggleWrap('radares_carteles_toggle', 'radares_carteles_wrap')
 };
 
 function toggleOpt(el, key, val, multi) {
@@ -960,16 +1375,18 @@ function toggleOpt(el, key, val, multi) {
 }
 
 function buildDots() {
+  const active = getActiveSteps();
+  const pos = active.indexOf(cur);
   const wrap = document.getElementById('dots');
-  wrap.innerHTML = STEP_NAMES.map((_, i) => {
+  wrap.innerHTML = active.map((_, i) => {
     let cls = 'dot';
-    if (i < cur) cls += ' done';
-    if (i === cur) cls += ' active';
-    const w = i === cur ? 22 : 6;
+    if (i < pos) cls += ' done';
+    if (i === pos) cls += ' active';
+    const w = i === pos ? 22 : 6;
     return `<div class="${cls}" style="width:${w}px"></div>`;
   }).join('');
   document.getElementById('prog-label').textContent =
-    `Paso ${cur + 1} de ${TOTAL} — ${STEP_NAMES[cur]}`;
+    `Paso ${pos + 1} de ${active.length} — ${STEP_NAMES[cur]}`;
 }
 
 function showStep(n) {
@@ -979,32 +1396,70 @@ function showStep(n) {
   cur = n;
   buildDots();
 
-  const isLast = n === TOTAL - 1;
+  const active = getActiveSteps();
+  const pos = active.indexOf(cur);
+  const isLast = pos === active.length - 1;
   document.getElementById('nav-bar').style.display = isLast ? 'none' : 'flex';
   document.getElementById('final-btns').style.display = isLast ? 'block' : 'none';
 
   const backBtn = document.getElementById('btn-back');
-  backBtn.style.visibility = n === 0 ? 'hidden' : 'visible';
+  backBtn.style.visibility = pos === 0 ? 'hidden' : 'visible';
 
   const nextBtn = document.getElementById('btn-next');
-  nextBtn.textContent = n === TOTAL - 2 ? 'Ver resumen ✓' : 'Siguiente →';
+  nextBtn.textContent = pos === active.length - 2 ? 'Ver resumen ✓' : 'Siguiente →';
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function goNext() {
   if (!validateStep(cur)) return;
-  if (cur === TOTAL - 2) buildSummary();
-  showStep(cur + 1);
+  const active = getActiveSteps();
+  const pos = active.indexOf(cur);
+  const nextDom = active[pos + 1];
+  if (nextDom === undefined) return;
+  if (nextDom === 7) buildSummary(); // al entrar al Resumen
+  showStep(nextDom);
 }
 
 function goBack() {
-  showStep(Math.max(0, cur - 1));
+  const active = getActiveSteps();
+  const pos = active.indexOf(cur);
+  if (pos > 0) showStep(active[pos - 1]);
 }
 
 function g(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
 function s(key) { return sel[key] && sel[key].length ? sel[key].join(', ') : ''; }
 function chk(id) { const e = document.getElementById(id); return e && e.classList.contains('on') ? 'Sí' : 'No'; }
+function chkYes(id) { const e = document.getElementById(id); return e && e.classList.contains('on') ? 'Sí' : ''; }
+
+// Para los toggles de "¿posee X existente?": mismo label corto siempre;
+// el valor es el nombre cargado si está activado, o "No" si no lo está.
+function resumenExistencia(toggleId, nombreId, label) {
+  const on = document.getElementById(toggleId)?.classList.contains('on');
+  return [label, on ? g(nombreId) : 'No'];
+}
+
+// Para adicionales tipo LPR / Anti Tail Gating: si está activado, mostrar solo
+// la cantidad (con su propio label); si no, mostrar "<label>: No".
+function resumenAdicionalCantidad(toggleId, cantidadId, labelCantidad, labelNo) {
+  const on = document.getElementById(toggleId)?.classList.contains('on');
+  if (on) return [labelCantidad, g(cantidadId)];
+  return [labelNo, 'No'];
+}
+
+// Radares y Carteles vehiculares pueden ser 0, pero al menos uno de los dos
+// debe ser mayor a 0. Limpia el estado de error en ambos campos apenas se cumple.
+function checkRadaresCarteles() {
+  const r = parseFloat(g('radares_cantidad')) || 0;
+  const c = parseFloat(g('carteles_cantidad')) || 0;
+  if (r > 0 || c > 0) {
+    const rEl = document.getElementById('radares_cantidad');
+    const cEl = document.getElementById('carteles_cantidad');
+    if (rEl) rEl.classList.remove('field-error');
+    if (cEl) cEl.classList.remove('field-error');
+    checkClearWarn();
+  }
+}
 function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function toggleCheck(el) {
   el.classList.toggle('on');
@@ -1017,11 +1472,40 @@ function analiticaVal() {
   return tipo;
 }
 
+function vssAccesoAlcanceVal() {
+  const alcance = sel['vss_acceso_alcance'] || [];
+  if (!alcance.length) return '';
+  if (alcance.includes('Otro')) { const d = g('vss_acceso_otro'); return d ? `Otro: ${d}` : 'Otro'; }
+  return alcance.join(', ');
+}
+
 function buildSummary() {
+  // El resumen refleja SOLO lo que corresponde al recorrido real: la sección de
+  // Tecnología aplica a CIP y la de Silicon Access a su unidad. Además, los datos
+  // de campos que quedaron ocultos (toggle apagado) no deben filtrarse al
+  // requerimiento aunque conserven un valor en el DOM.
+  const unidad     = (sel['unidad_negocio'] && sel['unidad_negocio'][0]) || '';
+  const cesOn      = document.getElementById('ces_yn')?.classList.contains('on');
+  const vssOn      = document.getElementById('vss_acceso_toggle')?.classList.contains('on');
+  const islasOn    = document.getElementById('islas_toggle')?.classList.contains('on');
+  const radaresOn  = document.getElementById('radares_carteles_toggle')?.classList.contains('on');
+  const removeOn   = document.getElementById('tec_remueve')?.classList.contains('on');
+
   const sections = [
     { title: 'Identificación', rows: [
-      ['Barrio / obra', g('barrio')],
-      ['Unidad', g('unidad')],
+      ['Cliente', g('cliente')],
+      ['Barrio / Administración / Industria', g('barrio')],
+      ['Unidad de negocio', s('unidad_negocio')],
+      ['Cantidad de lotes', g('cant_lotes')],
+      resumenExistencia('posee_control_acceso', 'nombre_control_acceso',
+        'Control de acceso existente'),
+      resumenExistencia('posee_empresa_seguridad', 'nombre_empresa_seguridad',
+        'Empresa de seguridad física existente'),
+      resumenExistencia('posee_seguridad_electronica', 'nombre_seguridad_electronica',
+        'Empresa de seguridad electrónica existente'),
+      ['Meses restantes de contrato (seg. electrónica)',
+        document.getElementById('posee_seguridad_electronica')?.classList.contains('on')
+          ? g('meses_restantes_contrato_electronica') : ''],
       ['Tipo de cliente', s('tipo_cliente')],
       ['Nombre del contacto', g('contacto_nombre')],
       ['Teléfono del contacto', g('contacto_tel')],
@@ -1034,26 +1518,55 @@ function buildSummary() {
       ['Qué cubrir', g('necesidad')],
       ['Tipo de negocio', s('tipo_negocio')],
     ]},
-    { title: 'Tecnología', rows: [
+  ];
+
+  if (unidad === 'CIP') {
+    sections.push({ title: 'Tecnología', rows: [
       ['Visualización', s('lugar_visualizacion')],
       ['Iluminación', s('iluminacion')],
+      ['Iluminación deportiva', deporteResumenTexto()],
       ['CES', chk('ces_yn')],
-      ['Modalidad CES', s('modalidad_ces')],
+      ['Modalidad CES', cesOn ? s('modalidad_ces') : ''],
+      ['VSS en Acceso', chk('vss_acceso_toggle')],
+      ['Visualización en Guardia', vssOn ? chk('vss_acceso_guardia_toggle') : ''],
+      ['Alcance VSS en Acceso', vssOn ? vssAccesoAlcanceVal() : ''],
+      ['Islas', chk('islas_toggle')],
+      ['Islas — Cantidad', islasOn ? g('islas_cantidad') : ''],
+      ['Islas — Modalidad', islasOn ? s('islas_modalidad') : ''],
       ['Analítica', analiticaVal()],
       ['Cámaras térmicas', g('camaras_termicas')],
-    ]},
+    ]});
+  }
+
+  if (unidad === 'Silicon Access') {
+    const siliconRows = [];
+    if (siliconOn()) {
+      siliconRows.push(
+        ['Accesos', g('cant_accesos')],
+        ['Carriles vehiculares', g('cant_carriles')],
+        ['Accesos peatonales', g('cant_peatonales')],
+        ['Smartphones', g('cant_smartphones')],
+        ['Barreras a cotizar', g('cant_barreras')],
+        resumenAdicionalCantidad('lpr_toggle', 'lpr_cantidad', 'Adicional Cámaras LPR – cantidad', 'Adicional Cámaras LPR'),
+        resumenAdicionalCantidad('atg_toggle', 'atg_cantidad', 'Adicional Anti Tail Gating – cantidad', 'Adicional Anti Tail Gating'),
+        ['Aclaratorias', g('aclaratorias')],
+      );
+    }
+    siliconRows.push(['Radares / Carteles vehiculares', chkYes('radares_carteles_toggle')]);
+    if (radaresOn) {
+      siliconRows.push(
+        ['Radares vehiculares – cantidad', g('radares_cantidad')],
+        ['Carteles vehiculares – cantidad', g('carteles_cantidad')],
+      );
+    }
+    sections.push({ title: 'Silicon Access', rows: siliconRows });
+  }
+
+  sections.push(
     { title: 'Alcances', rows: [
       ['Tec. existente – reutiliza', chk('tec_reutiliza')],
       ['Tec. existente – se remueve', chk('tec_remueve')],
-      ['Quién remueve', s('quien_remueve')],
-    ]},
-    { title: 'Silicon Access', rows: [
-      ['Accesos', g('cant_accesos')],
-      ['Carriles vehiculares', g('cant_carriles')],
-      ['Accesos peatonales', g('cant_peatonales')],
-      ['Smartphones', g('cant_smartphones')],
-      ['Barreras a cotizar', g('cant_barreras')],
-      ['Aclaratorias', g('aclaratorias')],
+      ['Quién remueve', removeOn ? s('quien_remueve') : ''],
     ]},
     { title: 'Notas y cierre', rows: [
       ['Observaciones', g('notas')],
@@ -1061,7 +1574,7 @@ function buildSummary() {
       ['Comercial', g('comercial')],
       ['Fecha', g('fecha')],
     ]},
-  ];
+  );
 
   const html = sections.map(sec => {
     const rows = sec.rows.filter(r => r[1]);
@@ -1171,17 +1684,25 @@ function updateShareBtn() {
 async function enviarWapp() {
   if (!window._txt) return;
   const files = window._imgs || [];
+  const status = document.getElementById('wapp-status');
+  if (status) status.textContent = '';
 
+  // Camino ideal: compartir texto + fotos por la hoja de compartir del sistema.
   if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
     try {
       await navigator.share({ title: 'Requerimiento de Preventa', text: window._txt, files });
+      return;
     } catch(e) {
-      if (e.name !== 'AbortError') {
-        window.open('https://wa.me/?text=' + encodeURIComponent(window._txt), '_blank');
-      }
+      if (e.name === 'AbortError') return; // el usuario canceló; no abrir nada más
+      // Cualquier otro error: caemos al fallback de solo texto.
     }
-  } else {
-    window.open('https://wa.me/?text=' + encodeURIComponent(window._txt), '_blank');
+  }
+
+  // Fallback: WhatsApp con solo el texto (no puede adjuntar archivos).
+  window.open('https://wa.me/?text=' + encodeURIComponent(window._txt), '_blank');
+  if (files.length > 0 && status) {
+    status.style.color = 'var(--orange)';
+    status.textContent = 'Se abrió WhatsApp solo con el texto: este dispositivo no permite adjuntar las fotos automáticamente. Adjuntalas a mano en el chat.';
   }
 }
 
@@ -1198,12 +1719,17 @@ function nueva() {
   if (wm) wm.style.display = 'none';
   const ws = document.getElementById('silicon_wrap');
   if (ws) ws.style.display = 'none';
+  ['nombre_control_acceso_wrap','nombre_empresa_seguridad_wrap','nombre_seguridad_electronica_wrap','lpr_wrap','atg_wrap','radares_carteles_wrap','ilum_deportiva_wrap','vss_acceso_wrap','vss_acceso_otro_wrap','islas_wrap']
+    .forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+  const dd = document.getElementById('deporte_detalles');
+  if (dd) dd.innerHTML = '';
   window._imgs = [];
   renderThumbs();
   updateShareBtn();
   window._cotizaciones = [];
   renderCotizaciones();
-  ['geo-status','contacto-status'].forEach(id => { const e = document.getElementById(id); if (e) e.textContent = ''; });
+  ['geo-status','contacto-status','wapp-status'].forEach(id => { const e = document.getElementById(id); if (e) e.textContent = ''; });
+  const pm = document.getElementById('precarga-msg'); if (pm) { pm.textContent = ''; pm.style.display = 'none'; }
   ['btn-geo','btn-contacto'].forEach(id => { const e = document.getElementById(id); if (e) e.classList.remove('ok'); });
   setFecha();
   showStep(0);
