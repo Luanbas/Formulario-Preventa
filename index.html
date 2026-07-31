@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Requerimiento de Preventa Mobile · v1.14 -->
+<!-- Requerimiento de Preventa Mobile · v1.15 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
@@ -1913,10 +1913,12 @@ async function construirPDF() {
 }
 
 function nombrePdf() {
-  const clienteNombre = (g('cliente') || 'Requerimiento')
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  const sanear = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/\s+/g, '_');
-  return `Requerimiento_Preventa_${clienteNombre}.pdf`;
+  const clienteNombre = sanear(g('cliente') || 'Requerimiento');
+  const unidad = (sel['unidad_negocio'] && sel['unidad_negocio'][0]) || '';
+  const sufijoUnidad = unidad ? `_${sanear(unidad)}` : '';
+  return `Requerimiento_Preventa_${clienteNombre}${sufijoUnidad}.pdf`;
 }
 
 async function guardarPDF() {
